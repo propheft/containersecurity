@@ -71,10 +71,6 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Update Kubeconfig
-        run: |
-          aws eks update-kubeconfig --region us-east-1 --name my-cluster
-
       - name: Deploy to Kubernetes
         run: |
           kubectl run my-app --image=${{ steps.ecr-login.outputs.registry }}/my-repo:latest --restart=Always
