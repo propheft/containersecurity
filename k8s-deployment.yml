@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  replicas: 1  # Número de réplicas del pod
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: 325436486329.dkr.ecr.eu-west-1.amazonaws.com/my-repo:latest  # Cambia esto a tu imagen de ECR
+        ports:
+        - containerPort: 80  # Puerto en el que la aplicación escucha
+        env:
+        - name: ENV_VAR_NAME
+          value: "value"  # Variables de entorno para la aplicación, si es necesario
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+  labels:
+    app: my-app
+spec:
+  type: LoadBalancer  # Usa NodePort o ClusterIP si no necesitas un LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: my-app
+
