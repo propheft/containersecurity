@@ -36,6 +36,10 @@ jobs:
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Save Docker image as tar file
+        run: |
+          docker save -o image.tar $ECR_REPOSITORY:$IMAGE_TAG
+
   scan-image:
     needs: build-and-push
     runs-on: ubuntu-latest
