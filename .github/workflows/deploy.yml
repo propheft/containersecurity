@@ -52,14 +52,6 @@ jobs:
           mv docker-images/image.tar image.tar
           ls -la
 
-      - name: Verify image.tar existence
-        run: |
-          echo "Current directory: $(pwd)"
-          echo "Contents of docker-images:"
-          ls -la docker-images
-          echo "Contents of /github/workspace:"
-          ls -la /github/workspace
-
       - name: Verify directorio docker antes del escaneo
         run: |
           echo "Verificando docker directorio"
