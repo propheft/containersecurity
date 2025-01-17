@@ -60,6 +60,11 @@ jobs:
           echo "Contents of /github/workspace:"
           ls -la /github/workspace
 
+      - name: Verify directorio docker antes del escaneo
+        run: |
+          echo "Verificando docker directorio"
+          ls -la docker-images
+
   scan-image:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -75,7 +80,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
-          LOCAL_IMAGE_TARBALL: ./docker-images/image.tar  # Ruta correcta para el archivo tar
+          LOCAL_IMAGE_TARBALL: docker-images/image.tar  # Ruta correcta para el archivo tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
