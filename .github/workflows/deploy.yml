@@ -37,20 +37,21 @@ jobs:
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Save Docker image as tar file
-       run: |
-        mkdir -p docker-images
-        docker save -o docker-images/image.tar ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-        ls -la docker-images
+        run: |
+          mkdir -p docker-images
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+          echo "Using IMAGE_URI=$IMAGE_URI"
+          docker save -o docker-images/image.tar "$IMAGE_URI"
+          ls -la docker-images
 
       - name: Check if image.tar exists
         run: |
-          if [ -f ./docker-images/image.tar ]; then
+          if [ -f docker-images/image.tar ]; then
             echo "image.tar found."
           else
             echo "image.tar not found!"
             exit 1
-          fi
-        # Verificar si el archivo image.tar se creó correctamente
+          fi        
 
   scan-image:
     needs: build-and-push
