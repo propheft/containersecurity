@@ -44,7 +44,6 @@ jobs:
           ls -la
 
       - name: Save Docker image as tar file
-        working-directory: ./
         run: |
           mkdir -p docker-images
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
