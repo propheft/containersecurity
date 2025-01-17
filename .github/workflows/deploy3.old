@@ -36,6 +36,10 @@ jobs:
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
+      - name: Save Docker image as tar file
+        run: |
+          mkdir -p ./docker-images  # Crear la carpeta donde se guardará la imagen tar
+          docker save -o ./docker-images/image.tar $ECR_REPOSITORY:$IMAGE_TAG
   scan-image:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -51,6 +55,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+          LOCAL_IMAGE_TARBALL: ./docker-images/image.tar  # Ruta correcta para el archivo tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
