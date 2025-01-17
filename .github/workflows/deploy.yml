@@ -49,8 +49,8 @@ jobs:
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
           echo "Using IMAGE_URI=$IMAGE_URI"
           docker save -o docker-images/image.tar "$IMAGE_URI"
-          mv docker-images/image.tar .
-          ls -la docker-images
+          mv docker-images/image.tar image.tar
+          ls -la
 
       - name: Verify image.tar existence
         run: |
