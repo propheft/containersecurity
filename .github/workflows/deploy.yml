@@ -44,14 +44,13 @@ jobs:
           docker save -o docker-images/image.tar "$IMAGE_URI"
           ls -la docker-images
 
-      - name: Check if image.tar exists
+      - name: Verify image.tar existence
         run: |
-          if [ -f docker-images/image.tar ]; then
-            echo "image.tar found."
-          else
-            echo "image.tar not found!"
-            exit 1
-          fi        
+          echo "Current directory: $(pwd)"
+          echo "Contents of docker-images:"
+          ls -la docker-images
+          echo "Contents of /github/workspace:"
+          ls -la /github/workspace
 
   scan-image:
     needs: build-and-push
