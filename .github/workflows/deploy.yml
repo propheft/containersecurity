@@ -38,9 +38,9 @@ jobs:
 
       - name: Save Docker image as tar file
         run: |
-          mkdir -p ./docker-images  # Crear la carpeta donde se guardará la imagen tar
-          docker save -o ./docker-images/image.tar $ECR_REPOSITORY:$IMAGE_TAG
-        # Guardamos el archivo tar en la carpeta ./docker-images
+          mkdir -p docker-images
+          docker save -o docker-images/image.tar ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+          ls -la docker-images  # Verifica si el archivo image.tar está presente
 
       - name: Check if image.tar exists
         run: |
@@ -67,7 +67,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
-          LOCAL_IMAGE_TARBALL: ./docker-images/image.tar  # Ruta correcta para el archivo tar
+          LOCAL_IMAGE_TARBALL: /docker-images/image.tar  # Ruta correcta para el archivo tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
