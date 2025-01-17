@@ -55,7 +55,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-          LOCAL_IMAGE_TARBALL: image.tar
+      #    LOCAL_IMAGE_TARBALL: image.tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
