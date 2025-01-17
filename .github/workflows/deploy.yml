@@ -49,16 +49,8 @@ jobs:
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
           echo "Using IMAGE_URI=$IMAGE_URI"
           docker save -o docker-images/image.tar "$IMAGE_URI"
-          mv docker-images/image.tar image.tar
-          ls -la
-
-      - name: Move image.tar to /github/workspace
-        run: |
-          mkdir -p /github/workspace
-          mv image.tar /github/workspace/image.tar
-          echo "Moved image.tar to /github/workspace/"
-          ls -la /github/workspace
-
+          mv docker-images/image.tar $GITHUB_WORKSPACE/image.tar
+          ls -la $GITHUB_WORKSPACE
 
   scan-image:
     needs: build-and-push
@@ -75,7 +67,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
-          LOCAL_IMAGE_TARBALL: image.tar  # Ruta correcta para el archivo tar
+          LOCAL_IMAGE_TARBALL: $GITHUB_WORKSPACE/image.tar  # Ruta correcta para el archivo tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
