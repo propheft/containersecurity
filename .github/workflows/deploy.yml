@@ -36,6 +36,13 @@ jobs:
           docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
+
+      - name: Verify working directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents of docker-images:"
+          ls -la
+
       - name: Save Docker image as tar file
         run: |
           mkdir -p docker-images
@@ -43,6 +50,7 @@ jobs:
           echo "Using IMAGE_URI=$IMAGE_URI"
           docker save -o docker-images/image.tar "$IMAGE_URI"
           ls -la docker-images
+          working-directory: /github/workspace
 
       - name: Verify image.tar existence
         run: |
