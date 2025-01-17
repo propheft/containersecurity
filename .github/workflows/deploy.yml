@@ -52,10 +52,6 @@ jobs:
           mv docker-images/image.tar image.tar
           ls -la
 
-      - name: Verify directorio docker antes del escaneo
-        run: |
-          echo "Verificando docker directorio"
-          ls -la docker-images
 
   scan-image:
     needs: build-and-push
