@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: Vision One Container Security Scan Action
-        uses: trendmicro/tmas-scan-action@version*
+        uses: trendmicro/tmas-scan-action@v4
         with:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           REGION: eu-central-1
@@ -50,7 +50,7 @@ jobs:
           SBOM: true
           MALWARE_SCAN: true
           SECRETS_SCAN: true
-          IMAGE: my-repo:latest
+          IMAGE: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           LOCAL_IMAGE_TARBALL: image.tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
