@@ -39,7 +39,7 @@ jobs:
       - name: Save Docker image as tar file
         run: |
           mkdir -p docker-images
-          docker save -o docker-images/image.tar ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ .env.IMAGE_TAG }}
+          docker save -o docker-images/image.tar ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           ls -la docker-images  # Verifica si el archivo image.tar está presente
 
       - name: Check if image.tar exists
