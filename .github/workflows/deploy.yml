@@ -42,7 +42,7 @@ jobs:
 
     steps:
       - name: Vision One Container Security Scan Action
-        uses: trendmicro/tmas-scan-action@version*
+        uses: trendmicro/tmas-scan-action@version3
         with:
           TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
           REGION: us-east-1
