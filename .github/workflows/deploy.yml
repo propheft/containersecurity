@@ -52,6 +52,13 @@ jobs:
           mv docker-images/image.tar image.tar
           ls -la
 
+      - name: Move image.tar to /github/workspace
+        run: |
+          mkdir -p /github/workspace
+          mv image.tar /github/workspace/image.tar
+          echo "Moved image.tar to /github/workspace/"
+          ls -la /github/workspace
+
 
   scan-image:
     needs: build-and-push
