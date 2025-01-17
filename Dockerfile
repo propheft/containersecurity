@@ -1,16 +1,10 @@
-FROM php:7.2-apache
-
-EXPOSE 80
-
-COPY wp /var/www/html/
-COPY main.sh /main.sh
-RUN set -ex && /bin/bash -c "chmod 755 /main.sh"
-
-RUN rm -rf /var/www/index.html
-
-COPY config.yml /var/www/html/config.yml
-COPY config.php /var/www/html/config.php
-
-ENTRYPOINT ["/main.sh"]
-
-CMD ["default"]
+FROM node:12
+ADD https://github.com/bkimminich/juice-shop/releases/download/v10.3.1/juice-shop-10.3.1_node12_linux_x64.tgz /juice-shop-10.3.1_node12_linux_x64.tgz
+WORKDIR /
+RUN tar -xf juice-shop-10.3.1_node12_linux_x64.tgz && mv juice-shop_10.3.1 juice-shop
+COPY app.js /juice-shop
+WORKDIR /juice-shop
+RUN npm install --save trend_app_protect
+ENV TREND_AP_LOG_LEVEL=debug
+EXPOSE 3000
+CMD ["npm", "start"]
