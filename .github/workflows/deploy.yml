@@ -66,7 +66,7 @@ jobs:
           SBOM: true  # Habilitar la creación de SBOM
           MALWARE_SCAN: true
           SECRETS_SCAN: true
-          IMAGE: "$IMAGE_URI"
+          IMAGE: alpine
           LOCAL_IMAGE_TARBALL:
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
