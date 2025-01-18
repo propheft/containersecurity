@@ -51,7 +51,7 @@ jobs:
           SBOM: true  # Habilitar la creación de SBOM
           MALWARE_SCAN: true
           SECRETS_SCAN: true
-          IMAGE: 325436486329.dkr.ecr.eu-west-1.amazonaws.com/my-repo:lat
+          IMAGE: 325436486329.dkr.ecr.eu-west-1.amazonaws.com/my-repo:last
           LOCAL_IMAGE_TARBALL:
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
