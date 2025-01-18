@@ -1,0 +1,74 @@
+name: Docker Push to ECR and Scan
+
+on:
+  push:
+    branches:
+      - main  # Cambia a la rama donde quieres activar el workflow
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: eu-west-1  # Asegúrate de definir la región correcta aquí
+      ECR_REPOSITORY: my-repo  # Cambia al nombre de tu repositorio
+      IMAGE_TAG: latest
+      AWS_ACCOUNT_ID: 325436486329
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+
+      - name: Login to Amazon ECR Public
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: public.ecr.aws/m9g3a6n7/scanactions
+          REPOSITORY: scanactions
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+
+
+  scan-image:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vision One Container Security Scan Action
+        uses: trendmicro/tmas-scan-action@main
+        with:
+          TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
+          REGION: eu-central-1
+          VULNERABILITY_SCAN: true
+          SBOM: true  # Habilitar la creación de SBOM
+          MALWARE_SCAN: true
+          SECRETS_SCAN: true
+          IMAGE: $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          LOCAL_IMAGE_TARBALL:  # Ruta correcta para el archivo tar
+          MAX_TOTAL: 5
+          MAX_CRITICAL: 1
+          MAX_HIGH: 1
+          MAX_MEDIUM: 1
+          MAX_LOW: 0
+          MAX_NEGLIGIBLE: 0
+          MAX_UNKNOWN: 0
+          SCAN_RESULT_ARTIFACT: result.json
+
+  deploy-to-k8s:
+    needs: scan-image
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s-deployment.yml
+
