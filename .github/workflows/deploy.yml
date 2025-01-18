@@ -37,6 +37,13 @@ jobs:
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
 
+     - name: Save Docker image as tar file
+        run: |
+          mkdir -p docker-images
+          IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
+          echo "IMAGE_URI is $IMAGE_URI"
+
+
   scan-image:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -51,7 +58,7 @@ jobs:
           SBOM: true  # Habilitar la creación de SBOM
           MALWARE_SCAN: true
           SECRETS_SCAN: true
-          IMAGE: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           LOCAL_IMAGE_TARBALL:  # Ruta correcta para el archivo tar
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
