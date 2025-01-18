@@ -37,12 +37,20 @@ jobs:
           docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
 
-     - name: Save Docker image as tar file
+      - name: Verify working directory
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Contents of docker-images:"
+          ls -la
+
+      - name: Save Docker image as tar file
         run: |
           mkdir -p docker-images
           IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}"
-          echo "IMAGE_URI is $IMAGE_URI"
-
+          echo "Using IMAGE_URI=$IMAGE_URI"
+          docker save -o docker-images/image.tar "$IMAGE_URI"
+          mv docker-images/image.tar image.tar
+          ls -la
 
   scan-image:
     needs: build-and-push
@@ -59,7 +67,7 @@ jobs:
           MALWARE_SCAN: true
           SECRETS_SCAN: true
           IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
-          LOCAL_IMAGE_TARBALL:  # Ruta correcta para el archivo tar
+          LOCAL_IMAGE_TARBALL:
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
