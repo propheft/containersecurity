@@ -8,6 +8,13 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
+    env:
+    REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+    REGISTRY_ALIAS: m9g3a6n7
+    REPOSITORY: scanactions
+    IMAGE_TAG: latest
+
     steps:
       - name: Check out code
         uses: actions/checkout@v3
