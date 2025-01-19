@@ -28,7 +28,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: public.ecr.aws/m9g3a6n7
+          REGISTRY_ALIAS: m9g3a6n7
           REPOSITORY: scanactions
           IMAGE_TAG: latest
         run: |
