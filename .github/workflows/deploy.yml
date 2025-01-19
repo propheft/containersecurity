@@ -37,7 +37,7 @@ jobs:
 
       - name: Set image variable
         id: set_image
-	run: echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
+        run: echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $IMAGE_TAG
       - name: Debug IMAGE variable
         run: echo $IMAGE
 
