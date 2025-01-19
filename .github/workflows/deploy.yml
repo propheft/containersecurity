@@ -36,6 +36,11 @@ jobs:
           docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
 
       - name: Set image variable
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: m9g3a6n7
+          REPOSITORY: scanactions
+          IMAGE_TAG: latest
         id: set_image
         run: |
          echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
