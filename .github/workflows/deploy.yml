@@ -20,23 +20,31 @@ jobs:
         uses: actions/checkout@v3
 
 
-      - name: Login to Amazon ECR Public
+      - name: Log in to Amazon ECR
         id: login-ecr-public
         uses: aws-actions/amazon-ecr-login@v2
         with:
           registry-type: public
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Build, tag, and push docker image to Amazon ECR Public
         env:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: public.ecr.aws/m9g3a6n7/scanactions
+          REGISTRY_ALIAS: public.ecr.aws/m9g3a6n7
           REPOSITORY: scanactions
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
+          # Construir la imagen Docker
+          docker build -t $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
 
+          # Etiquetar la imagen para el registro público
+          docker tag $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
+          # Subir la imagen al registro público
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
   scan-image:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -51,8 +59,8 @@ jobs:
           SBOM: true  # Habilitar la creación de SBOM
           MALWARE_SCAN: true
           SECRETS_SCAN: true
-          IMAGE: $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-          LOCAL_IMAGE_TARBALL:  # Ruta correcta para el archivo tar
+          IMAGE: $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          LOCAL_IMAGE_TARBALL:
           MAX_TOTAL: 5
           MAX_CRITICAL: 1
           MAX_HIGH: 1
