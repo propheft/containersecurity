@@ -1,0 +1,77 @@
+name: Docker Push to ECR and Scan
+
+on:
+  push:
+    branches:
+      - main  # Cambia a la rama donde quieres activar el workflow
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr-public
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Build, tag, and push docker image to Amazon ECR Public
+        env:
+          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
+          REGISTRY_ALIAS: public.ecr.aws
+          REPOSITORY: scanactions
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Construir la imagen Docker
+          docker build -t $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
+
+          # Etiquetar la imagen para el registro público
+          docker tag $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+          # Subir la imagen al registro público
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+  scan-image:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Vision One Container Security Scan Action
+        uses: trendmicro/tmas-scan-action@main
+        with:
+          TMAS_API_KEY: ${{ secrets.TMAS_API_KEY }}
+          REGION: eu-central-1
+          VULNERABILITY_SCAN: true
+          SBOM: true  # Habilitar la creación de SBOM
+          MALWARE_SCAN: true
+          SECRETS_SCAN: true
+          IMAGE: $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          LOCAL_IMAGE_TARBALL:
+          MAX_TOTAL: 5
+          MAX_CRITICAL: 1
+          MAX_HIGH: 1
+          MAX_MEDIUM: 1
+          MAX_LOW: 0
+          MAX_NEGLIGIBLE: 0
+          MAX_UNKNOWN: 0
+          SCAN_RESULT_ARTIFACT: result.json
+
+  deploy-to-k8s:
+    needs: scan-image
+    runs-on: ubuntu-latest
+    if: success()
+    
+    steps:
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s-deployment.yml
+
