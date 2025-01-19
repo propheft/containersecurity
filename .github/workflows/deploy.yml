@@ -44,6 +44,7 @@ jobs:
          echo $IMAGE
          echo "Registry: ${{ steps.login-ecr-public.outputs.registry }}"
          echo "Repository: ${{ env.REPOSITORY }}"
+         echo "Repository: ${{ env.IMAGE_TAG }}"
 
   scan-image:
     needs: build-and-push
