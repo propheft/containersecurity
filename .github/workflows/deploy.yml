@@ -34,8 +34,6 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
           docker push $REGISTRY/REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG
-     - name: list docker images
-        run: docker images
 
   scan-image:
     needs: build-and-push
