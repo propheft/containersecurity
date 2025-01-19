@@ -68,7 +68,8 @@ jobs:
   deploy-to-k8s:
     needs: scan-image
     runs-on: ubuntu-latest
-    if: success()    
+    if: success()
+    
     steps:
       - name: Deploy to Kubernetes
         run: |
