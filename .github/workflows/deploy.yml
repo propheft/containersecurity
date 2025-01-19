@@ -46,7 +46,7 @@ jobs:
          echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/${{ env.REGISTRY_ALIAS }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
       - name: Debug IMAGE variable
         run: |
-         echo $IMAGE
+         echo "IMAGE: ${{ env.IMAGE }}"
          echo "Registry: ${{ steps.login-ecr-public.outputs.registry }}"
          echo "Repository: ${{ env.REPOSITORY }}"
          echo "Repository: ${{ env.IMAGE_TAG }}"
