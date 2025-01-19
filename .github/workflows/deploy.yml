@@ -37,9 +37,13 @@ jobs:
 
       - name: Set image variable
         id: set_image
-        run: echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/$REGISTRY_ALIAS$REPOSITORY:$IMAGE_TAG }}" >> $GITHUB_ENV
+        run: |
+         echo "IMAGE=${{ steps.login-ecr-public.outputs.registry }}/${{ env.REPOSITORY }}:${{ env.IMAGE_TAG }}" >> $GITHUB_ENV
       - name: Debug IMAGE variable
-        run: echo $IMAGE
+        run: |
+         echo $IMAGE
+         echo "Registry: ${{ steps.login-ecr-public.outputs.registry }}"
+         echo "Repository: ${{ env.REPOSITORY }}"
 
   scan-image:
     needs: build-and-push
