@@ -32,13 +32,7 @@ jobs:
           REPOSITORY: scanactions
           IMAGE_TAG: latest
         run: |
-          # Construir la imagen Docker
           docker build -t $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
-
-          # Etiquetar la imagen para el registro público
-          docker tag $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:$IMAGE_TAG
-
-          # Subir la imagen al registro público
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
   scan-image:
     needs: build-and-push
