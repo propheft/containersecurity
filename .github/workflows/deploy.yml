@@ -30,7 +30,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
           REGISTRY_ALIAS: m9g3a6n7
           REPOSITORY: scanactions
-          IMAGE_TAG: ${{ github.sha }}
+          IMAGE_TAG: latest
         run: |
           # Construir la imagen Docker
           docker build -t $REGISTRY_ALIAS/$REPOSITORY:$IMAGE_TAG .
